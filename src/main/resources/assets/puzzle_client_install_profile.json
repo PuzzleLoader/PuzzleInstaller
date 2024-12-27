@@ -1,0 +1,209 @@
+{
+  "display_name": "Puzzle Client",
+  "name": "Puzzle Client [pz @pzVersion, cr @crVersion]",
+  "version": "pz @pzVersion, cr @crVersion",
+
+  "constants": {
+    "pzVersion": "2.1.15",
+    "crVersion": "0.3.12",
+    "baseUrl": "https://github.com/CRModders/CosmicArchive/raw/main/versions/pre-alpha",
+    "mainClass": "com.github.puzzle.core.loader.launch.pieces.ClientPiece",
+    "batchFile": "/assets/launch.bat",
+    "shellFile": "/assets/launch.sh",
+    "classPath": "#basePath/puzzle_libs/*\\$\\{pathSep\\}#basePath/client.jar\\$\\{pathSep\\}",
+    "overParadox": "false",
+
+    "asmVersion": "9.7.1"
+  },
+
+  "blocks": {
+    "puzzle.download_client": [
+      {
+        "type": "download",
+        "name": "Downloading Cosmic Reach Client",
+        "url": "@baseUrl/@crVersion/client/Cosmic-Reach-@crVersion.jar",
+        "path": "#basePath/client.jar"
+      }
+    ],
+    "puzzle.download_libs": [
+      {
+        "type": "maven-repos",
+        "name": "Setup Puzzle Maven Repos",
+        "repos": [
+          "https://repo.spongepowered.org/repository/maven-public/",
+          "https://maven.fabricmc.net/",
+          "https://jitpack.io/"
+        ]
+      },
+      {
+        "type": "maven-install",
+        "name": "Download Puzzle Libraries",
+        "dep": [
+          "com.github.PuzzleLoader:PuzzleLoader:@pzVersion:client",
+
+          "net.fabricmc:sponge-mixin:0.15.3+mixin.0.8.7",
+          "com.github.PuzzleLoader:access_manipulators:1.0.1",
+
+          "org.ow2.asm:asm:@asmVersion",
+          "org.ow2.asm:asm-tree:@asmVersion",
+          "org.ow2.asm:asm-util:@asmVersion",
+          "org.ow2.asm:asm-analysis:@asmVersion",
+          "org.ow2.asm:asm-commons:@asmVersion"
+        ],
+        "out": "#basePath/puzzle_libs"
+      }
+    ],
+    "puzzle.create_batch": [
+      {
+        "type": "extract-internal",
+        "name": "Extracting Readme",
+        "from": "/assets/readme.txt",
+        "to": "#basePath/puzzle_libs/readme.txt"
+      },
+      {
+        "type": "extract-internal",
+        "name": "Extracting Start Script #0 {Batch}",
+        "from": "@batchFile",
+        "to": "#basePath/puzzle_launch.bat"
+      },
+      {
+        "type": "format-string",
+        "name": "Formatting Start Script #1 {Batch}",
+        "file": "#basePath/puzzle_launch.bat"
+      },
+      {
+        "type": "replace-all",
+        "name": "Formatting Start Script #2 {Batch}",
+        "file": "#basePath/puzzle_launch.bat",
+        "find": "\\$\\{pathSep\\}",
+        "new": ";"
+      }
+    ],
+    "puzzle.create_shell": [
+      {
+        "type": "extract-internal",
+        "name": "Extracting Start Script #0 {Shell}",
+        "from": "@shellFile",
+        "to": "#basePath/puzzle_launch.sh"
+      },
+      {
+        "type": "format-string",
+        "name": "Formatting Start Script #1 {Shell}",
+        "file": "#basePath/puzzle_launch.sh"
+      }
+    ],
+    "puzzle.init": [
+      {
+        "type": "block-execute",
+        "block": "puzzle.download_libs"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.create_batch"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.create_shell"
+      }
+    ],
+    "puzzle.setup_fresh": [
+      {
+        "type": "block-execute",
+        "block": "puzzle.download_client"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.init"
+      }
+    ],
+    "puzzle.show_popup": [
+      {
+        "type": "create-popup",
+        "message": "Finished installing Puzzle pz @pzVersion cr @crVersion!!"
+      }
+    ],
+    "puzzle.does_puzzle_exist": [
+      {
+        "type": "file-exist-conditional",
+        "name": "Check for existing puzzle install #0",
+        "a": "#basePath/puzzle_launch.sh",
+        "b": "#basePath/puzzle_launch.bat",
+        "block_a": "puzzle.does_puzzle_exist_1",
+        "block_b": "puzzle.do_fresh_check"
+      }
+    ],
+    "puzzle.repair_broken_install": [
+      {
+        "type": "block-execute",
+        "name": "Libs found missing, re-adding",
+        "block": "puzzle.download_libs"
+      }
+    ],
+    "puzzle.does_puzzle_exist_1": [
+      {
+        "type": "file-exist-conditional",
+        "name": "Check for existing puzzle install #1",
+        "a": "#basePath/puzzle_libs",
+        "block_a": "puzzle.upgrade_check",
+        "block_b": "puzzle.repair_broken_install"
+      }
+    ],
+    "puzzle.upgrade_check": [
+      {
+        "type": "file-exist-conditional",
+        "name": "Upgrading Puzzle",
+        "a": "#basePath/.paradox_installer_meta",
+        "block_a": "puzzle.upgrade",
+        "block_b": "puzzle.upgrade_with_client"
+      }
+    ],
+    "puzzle.upgrade_with_client": [
+      {
+        "type": "delete",
+        "file": "#basePath/client.jar"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.download_client"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.upgrade"
+      }
+    ],
+    "puzzle.upgrade": [
+      {
+        "type": "delete",
+        "file": "puzzle_libs"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.download_libs"
+      },
+      {
+        "type": "create-popup",
+        "message": "Finished upgrading Puzzle to pz @pzVersion cr @crVersion!!"
+      }
+    ],
+    "puzzle.do_fresh_check": [
+      {
+        "type": "file-exist-conditional",
+        "name": "Check for client jar",
+        "a": "#basePath/client.jar",
+        "block_a": "puzzle.init",
+        "block_b": "puzzle.setup_fresh"
+      },
+      {
+        "type": "block-execute",
+        "block": "puzzle.show_popup"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "type": "block-execute",
+      "block": "puzzle.does_puzzle_exist"
+    }
+  ]
+
+}

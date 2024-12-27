@@ -1,0 +1,134 @@
+{
+  "display_name": "Paradox",
+  "name": "Paradox [v@pxVersion-@crVersion]",
+  "version": "v@pxVersion-@crVersion",
+
+  "constants": {
+    "pxVersion": "1.2.0",
+    "crVersion": "0.3.12",
+    "baseUrl": "https://github.com/CRModders/CosmicArchive/raw/main/versions/pre-alpha",
+    "mainClass": "com.github.puzzle.paradox.loader.launch.Piece",
+    "patchFile": "/assets/patches/jarpatch.patch",
+    "batchFile": "/assets/launch.bat",
+    "shellFile": "/assets/launch.sh",
+    "classPath": "#basePath/server.jar\\$\\{pathSep\\}"
+  },
+
+  "blocks": {
+    "paradox.upgrade": [
+      {
+        "type": "delete",
+        "name": "Removing Old Files",
+        "file": [
+          "#basePath/server.jar"
+        ]
+      },
+      {
+        "type": "block-execute",
+        "block": "paradox.install_and_patch"
+      },
+      {
+        "type": "block-execute",
+        "block": "paradox.clean"
+      },
+      {
+        "type": "create-popup",
+        "message": "Finished upgrading to Paradox version v@pxVersion-@crVersion!!"
+      }
+    ],
+    "paradox.install_and_patch": [
+      {
+        "type": "download",
+        "name": "Downloading Cosmic Reach Server",
+        "url": "@baseUrl/@crVersion/server/Cosmic-Reach-Server-@crVersion.jar",
+        "path": "#basePath/server-unpatched.jar"
+      },
+      {
+        "type": "extract-internal",
+        "name": "Extracting Patch File",
+        "from": "@patchFile",
+        "to": "#basePath/jarpatch.patch"
+      },
+      {
+        "type": "patch",
+        "name": "Patching Server",
+        "in": "#basePath/server-unpatched.jar",
+        "patch": "#basePath/jarpatch.patch",
+        "out": "#basePath/server.jar",
+        "compressor": "gz"
+      }
+    ],
+    "paradox.setup_fresh": [
+      {
+        "type": "block-execute",
+        "block": "paradox.install_and_patch"
+      },
+      {
+        "type": "block-execute",
+        "block": "paradox.create_run_scripts"
+      },
+      {
+        "type": "block-execute",
+        "block": "paradox.clean"
+      },
+      {
+        "type": "create-popup",
+        "message": "Finished install Paradox version v@pxVersion-@crVersion!!"
+      }
+    ],
+    "paradox.create_run_scripts": [
+      {
+        "type": "extract-internal",
+        "name": "Extracting Start Script {Batch}",
+        "from": "@batchFile",
+        "to": "#basePath/paradox_launch.bat"
+      },
+      {
+        "type": "format-string",
+        "name": "Formatting Start Script #1 {Batch}",
+        "file": "#basePath/paradox_launch.bat"
+      },
+      {
+        "type": "replace-all",
+        "file": "#basePath/paradox_launch.bat",
+        "find": "\\$\\{pathSep\\}",
+        "new": ";"
+      },
+      {
+        "type": "extract-internal",
+        "name": "Extracting Start Script {Shell}",
+        "from": "@shellFile",
+        "to": "#basePath/paradox_launch.sh"
+      },
+      {
+        "type": "format-string",
+        "name": "Formatting Start Script #1 {Shell}",
+        "file": "#basePath/paradox_launch.sh"
+      }
+    ],
+    "paradox.clean": [
+      {
+        "type": "delete",
+        "name": "Cleaning",
+        "file": [
+          "#basePath/server-unpatched.jar",
+          "#basePath/jarpatch.patch"
+        ]
+      }
+    ]
+  },
+
+  "steps": [
+    {
+      "type": "file-exist-conditional",
+      "a": "#basePath/server.jar",
+      "block_a": "paradox.upgrade",
+      "block_b": "paradox.setup_fresh"
+    },
+    {
+      "type": "write-file",
+      "fname": "#basePath/.paradox_installer_meta",
+      "value": "*WARNING* DONT DELETE THIS OR PUZZLE INSTALL COULD OVERWRITE SERVER JAR"
+    }
+  ]
+}
