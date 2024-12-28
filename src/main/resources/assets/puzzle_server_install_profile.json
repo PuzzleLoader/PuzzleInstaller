@@ -11,9 +11,7 @@
     "batchFile": "/assets/launch.bat",
     "shellFile": "/assets/launch.sh",
     "classPath": "#basePath/puzzle_libs/*\\$\\{pathSep\\}#basePath/server.jar\\$\\{pathSep\\}",
-    "overParadox": "false",
-
-    "asmVersion": "9.7.1"
+    "overParadox": "false"
   },
 
   "blocks": {
