@@ -4,7 +4,7 @@
   "version": "pz @pzVersion, cr @crVersion",
 
   "constants": {
-    "pzVersion": "2.1.15",
+    "pzVersion": "2.2.0",
     "crVersion": "0.3.12",
     "baseUrl": "https://github.com/CRModders/CosmicArchive/raw/main/versions/pre-alpha",
     "mainClass": "com.github.puzzle.core.loader.launch.pieces.ClientPiece",
@@ -39,16 +39,7 @@
         "type": "maven-install",
         "name": "Download Puzzle Libraries",
         "dep": [
-          "com.github.PuzzleLoader:PuzzleLoader:@pzVersion:client",
-
-          "net.fabricmc:sponge-mixin:0.15.3+mixin.0.8.7",
-          "com.github.PuzzleLoader:access_manipulators:1.0.1",
-
-          "org.ow2.asm:asm:@asmVersion",
-          "org.ow2.asm:asm-tree:@asmVersion",
-          "org.ow2.asm:asm-util:@asmVersion",
-          "org.ow2.asm:asm-analysis:@asmVersion",
-          "org.ow2.asm:asm-commons:@asmVersion"
+          "com.github.PuzzleLoader:PuzzleLoader:@pzVersion:client"
         ],
         "out": "#basePath/puzzle_libs"
       }
