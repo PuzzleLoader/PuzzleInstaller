@@ -4,6 +4,7 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.github.puzzle.setup.gui.MainWindow;
 import com.github.puzzle.setup.tabs.ParadoxInstallTab;
 import com.github.puzzle.setup.tabs.PuzzleClientInstallTab;
+import com.github.puzzle.setup.tabs.PuzzleModTemplateTab;
 import com.github.puzzle.setup.tabs.PuzzleServerInstallTab;
 
 import javax.swing.*;
@@ -27,6 +28,7 @@ public class Main {
             installerTabs.addTab("Puzzle Client", new PuzzleClientInstallTab());
             installerTabs.addTab("Puzzle Server", new PuzzleServerInstallTab());
             installerTabs.addTab("Paradox", new ParadoxInstallTab());
+//            installerTabs.addTab("Mod Template Maker", new PuzzleModTemplateTab());
             window.add(installerTabs);
 
             window.setIcon(Toolkit.getDefaultToolkit().createImage(Main.class.getResource("/assets/icons/icon.png")));

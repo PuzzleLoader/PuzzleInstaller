@@ -4,8 +4,8 @@
   "version": "pz @pzVersion, cr @crVersion",
 
   "constants": {
-    "pzVersion": "2.2.0",
-    "crVersion": "0.3.12",
+    "pzVersion": "2.2.2",
+    "crVersion": "0.3.14",
     "baseUrl": "https://github.com/CRModders/CosmicArchive/raw/main/versions/pre-alpha",
     "mainClass": "com.github.puzzle.core.loader.launch.pieces.ServerPiece",
     "batchFile": "/assets/launch.bat",
